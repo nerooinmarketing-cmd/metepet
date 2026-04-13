@@ -23,6 +23,8 @@ export interface GlobalData {
   menu2En: string; menu2Es: string; menu2Fr: string; menu2Link: string;
   menu3En: string; menu3Es: string; menu3Fr: string; menu3Link: string;
   menu4En: string; menu4Es: string; menu4Fr: string; menu4Link: string;
+  discountCode: string;
+  discountLink: string;
 }
 
 export interface HomeData {
@@ -52,6 +54,47 @@ export interface Review {
 export interface FooterData {
   descEn: string; descEs: string; descFr: string;
   copyrightEn: string; copyrightEs: string; copyrightFr: string;
+  
+  // Navigation Links
+  navTitleEn: string; navTitleEs: string; navTitleFr: string;
+  navLink1En: string; navLink1Es: string; navLink1Fr: string; navLink1Url: string;
+  navLink2En: string; navLink2Es: string; navLink2Fr: string; navLink2Url: string;
+  navLink3En: string; navLink3Es: string; navLink3Fr: string; navLink3Url: string;
+  navLink4En: string; navLink4Es: string; navLink4Fr: string; navLink4Url: string;
+
+  // Information Links
+  infoTitleEn: string; infoTitleEs: string; infoTitleFr: string;
+  infoLink1En: string; infoLink1Es: string; infoLink1Fr: string; infoLink1Url: string;
+  infoLink2En: string; infoLink2Es: string; infoLink2Fr: string; infoLink2Url: string;
+  infoLink3En: string; infoLink3Es: string; infoLink3Fr: string; infoLink3Url: string;
+  infoLink4En: string; infoLink4Es: string; infoLink4Fr: string; infoLink4Url: string;
+
+  // Support
+  supportTitleEn: string; supportTitleEs: string; supportTitleFr: string;
+  supportDescEn: string; supportDescEs: string; supportDescFr: string;
+  contactBtnEn: string; contactBtnEs: string; contactBtnFr: string; contactBtnUrl: string;
+
+  // Social Links
+  instagramUrl: string;
+  twitterUrl: string;
+  facebookUrl: string;
+}
+
+export interface DiscountLead {
+  id: number;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  country: string;
+  city: string;
+  date: string;
+}
+
+export interface NewsletterLead {
+  id: number;
+  email: string;
+  date: string;
 }
 
 interface AppState {
@@ -73,6 +116,12 @@ interface AppState {
   updateReview: (review: Review) => void;
   footerData: FooterData;
   updateFooter: (data: FooterData) => void;
+  discountLeads: DiscountLead[];
+  addDiscountLead: (lead: Omit<DiscountLead, 'id' | 'date'>) => void;
+  deleteDiscountLead: (id: number) => void;
+  newsletterLeads: NewsletterLead[];
+  addNewsletterLead: (email: string) => void;
+  deleteNewsletterLead: (id: number) => void;
 }
 
 const defaultPopupFields = {
@@ -146,6 +195,8 @@ const INITIAL_GLOBAL: GlobalData = {
   menu2En: "The Apothecary", menu2Es: "La Botica", menu2Fr: "L'Apothicaire", menu2Link: "#products",
   menu3En: "Journal", menu3Es: "Diario", menu3Fr: "Journal", menu3Link: "#reviews",
   menu4En: "Our Philosophy", menu4Es: "Nuestra Filosofía", menu4Fr: "Notre Philosophie", menu4Link: "#about",
+  discountCode: "METEPT05",
+  discountLink: "#products",
 };
 
 const INITIAL_HOME: HomeData = {
@@ -198,7 +249,29 @@ const INITIAL_FOOTER: FooterData = {
   descFr: "Nourrir le lien profond entre l'homme et ses proches grâce à un design intentionnel, une rigueur scientifique et des soins botaniques réparateurs.",
   copyrightEn: "© 2024 The Curated Sanctuary. All rights reserved.",
   copyrightEs: "© 2024 The Curated Sanctuary. Todos los derechos reservados.",
-  copyrightFr: "© 2024 The Curated Sanctuary. Tous droits réservés."
+  copyrightFr: "© 2024 The Curated Sanctuary. Tous droits réservés.",
+  
+  navTitleEn: "NAVIGATION", navTitleEs: "NAVEGACIÓN", navTitleFr: "NAVIGATION",
+  navLink1En: "The Collections", navLink1Es: "Las Colecciones", navLink1Fr: "Les Collections", navLink1Url: "#products",
+  navLink2En: "Brand Philosophy", navLink2Es: "Filosofía de Marca", navLink2Fr: "Philosophie de Marque", navLink2Url: "#about",
+  navLink3En: "The Journal", navLink3Es: "El Diario", navLink3Fr: "Le Journal", navLink3Url: "#reviews",
+  navLink4En: "Press & Media", navLink4Es: "Prensa y Medios", navLink4Fr: "Presse et Médias", navLink4Url: "#",
+
+  infoTitleEn: "INFORMATION", infoTitleEs: "INFORMACIÓN", infoTitleFr: "INFORMATION",
+  infoLink1En: "Partnerships", infoLink1Es: "Asociaciones", infoLink1Fr: "Partenariats", infoLink1Url: "#",
+  infoLink2En: "Privacy Policy", infoLink2Es: "Política de Privacidad", infoLink2Fr: "Politique de Confidentialité", infoLink2Url: "#",
+  infoLink3En: "Terms of Use", infoLink3Es: "Términos de Uso", infoLink3Fr: "Conditions d'Utilisation", infoLink3Url: "#",
+  infoLink4En: "Connect With Us", infoLink4Es: "Conéctate con Nosotros", infoLink4Fr: "Connectez-vous avec Nous", infoLink4Url: "#",
+
+  supportTitleEn: "SUPPORT", supportTitleEs: "SOPORTE", supportTitleFr: "SUPPORT",
+  supportDescEn: "Need assistance with your sanctuary essentials? Our care team is here to help.",
+  supportDescEs: "¿Necesita ayuda con los elementos esenciales de su santuario? Nuestro equipo de atención está aquí para ayudar.",
+  supportDescFr: "Besoin d'aide avec les essentiels de votre sanctuaire ? Notre équipe de soins est là pour vous aider.",
+  contactBtnEn: "CONTACT US", contactBtnEs: "CONTÁCTENOS", contactBtnFr: "NOUS CONTACTER", contactBtnUrl: "#",
+
+  instagramUrl: "#",
+  twitterUrl: "#",
+  facebookUrl: "#",
 };
 
 const AppContext = createContext<AppState | undefined>(undefined);
@@ -237,6 +310,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       menu4Es: parsed.menu4Es || INITIAL_GLOBAL.menu4Es,
       menu4Fr: parsed.menu4Fr || INITIAL_GLOBAL.menu4Fr,
       menu4Link: parsed.menu4Link || INITIAL_GLOBAL.menu4Link,
+      discountCode: parsed.discountCode || INITIAL_GLOBAL.discountCode,
+      discountLink: parsed.discountLink || INITIAL_GLOBAL.discountLink,
     };
   });
   
@@ -268,7 +343,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const [footerData, setFooterData] = useState<FooterData>(() => {
     const saved = localStorage.getItem('app_footer');
-    return saved ? JSON.parse(saved) : INITIAL_FOOTER;
+    if (!saved) return INITIAL_FOOTER;
+    const parsed = JSON.parse(saved);
+    return {
+      ...INITIAL_FOOTER,
+      ...parsed,
+    };
+  });
+
+  const [discountLeads, setDiscountLeads] = useState<DiscountLead[]>(() => {
+    const saved = localStorage.getItem('app_discount_leads');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [newsletterLeads, setNewsletterLeads] = useState<NewsletterLead[]>(() => {
+    const saved = localStorage.getItem('app_newsletter_leads');
+    return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => { localStorage.setItem('app_products', JSON.stringify(products)); }, [products]);
@@ -277,6 +367,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { localStorage.setItem('app_about', JSON.stringify(aboutData)); }, [aboutData]);
   useEffect(() => { localStorage.setItem('app_reviews', JSON.stringify(reviews)); }, [reviews]);
   useEffect(() => { localStorage.setItem('app_footer', JSON.stringify(footerData)); }, [footerData]);
+  useEffect(() => { localStorage.setItem('app_discount_leads', JSON.stringify(discountLeads)); }, [discountLeads]);
+  useEffect(() => { localStorage.setItem('app_newsletter_leads', JSON.stringify(newsletterLeads)); }, [newsletterLeads]);
   useEffect(() => { localStorage.setItem('app_admin_lang', adminLang); }, [adminLang]);
 
   const updateProduct = (updated: Product) => setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
@@ -288,6 +380,38 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const updateReview = (updated: Review) => setReviews(prev => prev.map(r => r.id === updated.id ? updated : r));
   const updateFooter = (data: FooterData) => setFooterData(data);
 
+  const addDiscountLead = (leadData: Omit<DiscountLead, 'id' | 'date'>) => {
+    setDiscountLeads(prev => {
+      const newId = prev.length > 0 ? Math.max(...prev.map(l => l.id)) + 1 : 1;
+      const newLead: DiscountLead = {
+        ...leadData,
+        id: newId,
+        date: new Date().toISOString()
+      };
+      return [newLead, ...prev];
+    });
+  };
+
+  const deleteDiscountLead = (id: number) => {
+    setDiscountLeads(prev => prev.filter(l => l.id !== id));
+  };
+
+  const addNewsletterLead = (email: string) => {
+    setNewsletterLeads(prev => {
+      const newId = prev.length > 0 ? Math.max(...prev.map(l => l.id)) + 1 : 1;
+      const newLead: NewsletterLead = {
+        id: newId,
+        email,
+        date: new Date().toISOString()
+      };
+      return [newLead, ...prev];
+    });
+  };
+
+  const deleteNewsletterLead = (id: number) => {
+    setNewsletterLeads(prev => prev.filter(l => l.id !== id));
+  };
+
   return (
     <AppContext.Provider value={{ 
       language, setLanguage, 
@@ -297,7 +421,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       homeData, updateHome,
       aboutData, updateAbout,
       reviews, updateReview,
-      footerData, updateFooter
+      footerData, updateFooter,
+      discountLeads, addDiscountLead, deleteDiscountLead,
+      newsletterLeads, addNewsletterLead, deleteNewsletterLead
     }}>
       {children}
     </AppContext.Provider>

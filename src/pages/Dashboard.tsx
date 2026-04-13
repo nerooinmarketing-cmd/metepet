@@ -13,7 +13,9 @@ import {
   Save,
   Globe,
   Plus,
-  Trash2
+  Trash2,
+  Users,
+  Mail
 } from "lucide-react";
 import { translateText } from "../lib/gemini";
 import { useAppContext, Product } from "../lib/store";
@@ -22,8 +24,10 @@ import AboutManager from "../components/admin/AboutManager";
 import ReviewsManager from "../components/admin/ReviewsManager";
 import FooterManager from "../components/admin/FooterManager";
 import GlobalManager from "../components/admin/GlobalManager";
+import LeadsManager from "../components/admin/LeadsManager";
+import NewsletterManager from "../components/admin/NewsletterManager";
 
-type Tab = "global" | "home" | "products" | "about" | "reviews" | "footer";
+type Tab = "global" | "home" | "products" | "about" | "reviews" | "footer" | "leads" | "newsletter";
 
 export default function Dashboard() {
   const { adminLang, setAdminLang } = useAppContext();
@@ -38,6 +42,8 @@ export default function Dashboard() {
     { id: "about", label: t("About Us", "Hakkımızda"), icon: Info },
     { id: "reviews", label: t("Reviews", "Yorumlar"), icon: Star },
     { id: "footer", label: t("Footer", "Alt Bilgi"), icon: PanelBottom },
+    { id: "leads", label: t("Discount Leads", "İndirim Talepleri"), icon: Users },
+    { id: "newsletter", label: t("Newsletter", "Bülten"), icon: Mail },
   ];
 
   return (
@@ -110,6 +116,8 @@ export default function Dashboard() {
           {activeTab === "about" && <AboutManager />}
           {activeTab === "reviews" && <ReviewsManager />}
           {activeTab === "footer" && <FooterManager />}
+          {activeTab === "leads" && <LeadsManager />}
+          {activeTab === "newsletter" && <NewsletterManager />}
         </div>
       </main>
     </div>

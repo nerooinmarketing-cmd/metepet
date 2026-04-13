@@ -13,15 +13,19 @@ import {
   Menu,
   X
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAppContext, Product } from "../lib/store";
 import ProductPopup from "../components/ProductPopup";
+import DiscountPopup from "../components/DiscountPopup";
 
 export default function Landing() {
-  const { products, homeData, aboutData, reviews, footerData, globalData, language, setLanguage } = useAppContext();
+  const { products, homeData, aboutData, reviews, footerData, globalData, language, setLanguage, addNewsletterLead } = useAppContext();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isDiscountPopupOpen, setIsDiscountPopupOpen] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [isNewsletterSubscribed, setIsNewsletterSubscribed] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +36,16 @@ export default function Landing() {
   }, []);
 
   const t = (en: string, es: string, fr: string) => language === 'es' ? es : language === 'fr' ? fr : en;
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newsletterEmail) {
+      addNewsletterLead(newsletterEmail);
+      setIsNewsletterSubscribed(true);
+      setNewsletterEmail("");
+      setTimeout(() => setIsNewsletterSubscribed(false), 3000);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-surface">
@@ -332,7 +346,10 @@ export default function Landing() {
               <p className="text-white/70 text-lg max-w-2xl mx-auto font-light">
                 Fill out the form now and instantly get your special discount code for your next purchase!
               </p>
-              <button className="bg-white text-primary px-12 py-5 rounded-full font-bold hover:bg-surface-dark transition-all shadow-xl">
+              <button 
+                onClick={() => setIsDiscountPopupOpen(true)}
+                className="bg-white text-primary px-12 py-5 rounded-full font-bold hover:bg-surface-dark transition-all shadow-xl"
+              >
                 Generate Code
               </button>
             </div>
@@ -392,14 +409,20 @@ export default function Landing() {
                 Subscribe to our newsletter for the latest pet care tips and product updates.
               </p>
             </div>
-            <form className="flex flex-col sm:flex-row gap-3 pt-4" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex flex-col sm:flex-row gap-3 pt-4" onSubmit={handleNewsletterSubmit}>
               <input 
                 type="email" 
+                required
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="Enter your email" 
                 className="flex-grow bg-surface-dark border-none rounded-full px-8 py-5 focus:ring-2 focus:ring-primary outline-none transition-all"
               />
-              <button className="bg-primary text-white px-10 py-5 rounded-full font-bold hover:bg-primary-light transition-all flex items-center justify-center gap-2">
-                Subscribe <Mail size={18} />
+              <button 
+                type="submit"
+                className="bg-primary text-white px-10 py-5 rounded-full font-bold hover:bg-primary-light transition-all flex items-center justify-center gap-2"
+              >
+                {isNewsletterSubscribed ? "Subscribed!" : "Subscribe"} <Mail size={18} />
               </button>
             </form>
           </div>
@@ -427,44 +450,52 @@ export default function Landing() {
                 {t(footerData.descEn, footerData.descEs, footerData.descFr)}
               </p>
               <div className="flex gap-4">
-                {[Instagram, Twitter, Facebook].map((Icon, i) => (
-                  <a key={i} href="#" className="text-primary/40 hover:text-primary transition-colors">
-                    <Icon size={20} />
-                  </a>
-                ))}
+                <a href={footerData.instagramUrl} className="text-primary/40 hover:text-primary transition-colors">
+                  <Instagram size={20} />
+                </a>
+                <a href={footerData.twitterUrl} className="text-primary/40 hover:text-primary transition-colors">
+                  <Twitter size={20} />
+                </a>
+                <a href={footerData.facebookUrl} className="text-primary/40 hover:text-primary transition-colors">
+                  <Facebook size={20} />
+                </a>
               </div>
             </div>
 
             <div>
-              <h5 className="text-primary font-bold mb-8 text-xs uppercase tracking-[0.2em]">Navigation</h5>
+              <h5 className="text-primary font-bold mb-8 text-xs uppercase tracking-[0.2em]">
+                {t(footerData.navTitleEn, footerData.navTitleEs, footerData.navTitleFr)}
+              </h5>
               <ul className="space-y-4">
-                {["The Collections", "Brand Philosophy", "The Journal", "Press & Media"].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">{item}</a>
-                  </li>
-                ))}
+                <li><a href={footerData.navLink1Url} className="text-text-muted hover:text-primary transition-colors text-sm">{t(footerData.navLink1En, footerData.navLink1Es, footerData.navLink1Fr)}</a></li>
+                <li><a href={footerData.navLink2Url} className="text-text-muted hover:text-primary transition-colors text-sm">{t(footerData.navLink2En, footerData.navLink2Es, footerData.navLink2Fr)}</a></li>
+                <li><a href={footerData.navLink3Url} className="text-text-muted hover:text-primary transition-colors text-sm">{t(footerData.navLink3En, footerData.navLink3Es, footerData.navLink3Fr)}</a></li>
+                <li><a href={footerData.navLink4Url} className="text-text-muted hover:text-primary transition-colors text-sm">{t(footerData.navLink4En, footerData.navLink4Es, footerData.navLink4Fr)}</a></li>
               </ul>
             </div>
 
             <div>
-              <h5 className="text-primary font-bold mb-8 text-xs uppercase tracking-[0.2em]">Information</h5>
+              <h5 className="text-primary font-bold mb-8 text-xs uppercase tracking-[0.2em]">
+                {t(footerData.infoTitleEn, footerData.infoTitleEs, footerData.infoTitleFr)}
+              </h5>
               <ul className="space-y-4">
-                {["Partnerships", "Privacy Policy", "Terms of Use", "Connect With Us"].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-text-muted hover:text-primary transition-colors text-sm">{item}</a>
-                  </li>
-                ))}
+                <li><a href={footerData.infoLink1Url} className="text-text-muted hover:text-primary transition-colors text-sm">{t(footerData.infoLink1En, footerData.infoLink1Es, footerData.infoLink1Fr)}</a></li>
+                <li><a href={footerData.infoLink2Url} className="text-text-muted hover:text-primary transition-colors text-sm">{t(footerData.infoLink2En, footerData.infoLink2Es, footerData.infoLink2Fr)}</a></li>
+                <li><a href={footerData.infoLink3Url} className="text-text-muted hover:text-primary transition-colors text-sm">{t(footerData.infoLink3En, footerData.infoLink3Es, footerData.infoLink3Fr)}</a></li>
+                <li><a href={footerData.infoLink4Url} className="text-text-muted hover:text-primary transition-colors text-sm">{t(footerData.infoLink4En, footerData.infoLink4Es, footerData.infoLink4Fr)}</a></li>
               </ul>
             </div>
 
             <div className="space-y-6">
-              <h5 className="text-primary font-bold mb-8 text-xs uppercase tracking-[0.2em]">Support</h5>
+              <h5 className="text-primary font-bold mb-8 text-xs uppercase tracking-[0.2em]">
+                {t(footerData.supportTitleEn, footerData.supportTitleEs, footerData.supportTitleFr)}
+              </h5>
               <p className="text-sm text-text-muted leading-relaxed">
-                Need assistance with your sanctuary essentials? Our care team is here to help.
+                {t(footerData.supportDescEn, footerData.supportDescEs, footerData.supportDescFr)}
               </p>
-              <button className="w-full bg-primary text-white py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-primary-light transition-all">
-                Contact Us
-              </button>
+              <a href={footerData.contactBtnUrl} className="block text-center w-full bg-primary text-white py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-primary-light transition-all">
+                {t(footerData.contactBtnEn, footerData.contactBtnEs, footerData.contactBtnFr)}
+              </a>
             </div>
           </div>
 
@@ -487,6 +518,11 @@ export default function Landing() {
           product={selectedProduct} 
           onClose={() => setSelectedProduct(null)} 
         />
+      )}
+
+      {/* Discount Popup */}
+      {isDiscountPopupOpen && (
+        <DiscountPopup onClose={() => setIsDiscountPopupOpen(false)} />
       )}
     </div>
   );

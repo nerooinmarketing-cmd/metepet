@@ -117,6 +117,45 @@ export default function GlobalManager() {
           </div>
         </div>
 
+        <hr className="border-gray-100" />
+
+        {/* Discount Code Section */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+            {t("Discount Settings", "İndirim Ayarları")}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">{t("Discount Code", "İndirim Kodu")}</label>
+              <input 
+                type="text" 
+                value={data.discountCode}
+                onChange={(e) => setData({...data, discountCode: e.target.value})}
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-mono uppercase"
+                placeholder="WELCOME20"
+              />
+              <p className="text-xs text-gray-400">
+                {t("This code will be shown to users after they fill out the discount form.", "Bu kod, kullanıcılar indirim formunu doldurduktan sonra gösterilecektir.")}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">{t("Redirect Link", "Yönlendirme Linki")}</label>
+              <input 
+                type="text" 
+                value={data.discountLink}
+                onChange={(e) => setData({...data, discountLink: e.target.value})}
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                placeholder="#products"
+              />
+              <p className="text-xs text-gray-400">
+                {t("Where the 'Continue Shopping' button redirects to.", "'Alışverişe Devam Et' butonunun yönlendireceği link.")}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <hr className="border-gray-100" />
+
         {/* Menu Section */}
         <div className="space-y-4 border-t border-gray-100 pt-8">
           <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
