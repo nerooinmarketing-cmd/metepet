@@ -213,10 +213,10 @@ const INITIAL_GLOBAL: GlobalData = {
 
 const INITIAL_HOME: HomeData = {
   badgeEn: "The Modern Apothecary", badgeEs: "El Boticario Moderno", badgeFr: "L'Apothicaire Moderne",
-  titleEn: "Premium Care\nFor Every Soul.", titleEs: "Cuidado Premium\nPara Cada Alma.", titleFr: "Soin Premium\nPour Chaque Âme.",
-  descEn: "Transforming standard pet care into a boutique wellness experience. We curate only the finest essentials for your companions.",
-  descEs: "Transformando el cuidado estándar de mascotas en una experiencia de bienestar boutique. Seleccionamos solo los mejores elementos esenciales para sus compañeros.",
-  descFr: "Transformer les soins standard pour animaux de compagnie en une expérience de bien-être boutique. Nous sélectionnons uniquement les meilleurs essentiels pour vos compagnons.",
+  titleEn: "How to Use\nVetromycin", titleEs: "Cómo Usar\nVetromycin", titleFr: "Comment Utiliser\nVetromycin",
+  descEn: "10.00IU/g+5mg/g Pet Eye Ointment\n(Oxytetracycline HCl with Polymyxin B Sulfate)",
+  descEs: "10.00IU/g+5mg/g Pomada Oftálmica para Mascotas\n(Oxitetraciclina HCl con Sulfato de Polimixina B)",
+  descFr: "10.00IU/g+5mg/g Pommade Ophtalmique pour Animaux\n(Oxytétracycline HCl avec Sulfate de Polymyxine B)",
   button1En: "Explore Products", button1Es: "Explorar Productos", button1Fr: "Explorer les Produits",
   button2En: "About Us", button2Es: "Sobre Nosotros", button2Fr: "À Propos",
   imageUrl: "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=1200"
@@ -287,7 +287,7 @@ const INITIAL_FOOTER: FooterData = {
 };
 
 const INITIAL_WELCOME_POPUP: WelcomePopupData = {
-  isActive: true,
+  isActive: false,
   imageUrl: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=800",
   titleEn: "Welcome to Mete Pet", titleEs: "Bienvenido a Mete Pet", titleFr: "Bienvenue chez Mete Pet",
   descEn: "Discover our premium pet care products designed for the well-being of your furry friends.",
