@@ -15,7 +15,8 @@ import {
   Plus,
   Trash2,
   Users,
-  Mail
+  Mail,
+  Upload
 } from "lucide-react";
 import { translateText } from "../lib/gemini";
 import { useAppContext, Product } from "../lib/store";
@@ -26,17 +27,67 @@ import FooterManager from "../components/admin/FooterManager";
 import GlobalManager from "../components/admin/GlobalManager";
 import LeadsManager from "../components/admin/LeadsManager";
 import NewsletterManager from "../components/admin/NewsletterManager";
+import WelcomePopupManager from "../components/admin/WelcomePopupManager";
 
-type Tab = "global" | "home" | "products" | "about" | "reviews" | "footer" | "leads" | "newsletter";
+type Tab = "global" | "home" | "products" | "about" | "reviews" | "footer" | "leads" | "newsletter" | "welcomePopup";
 
 export default function Dashboard() {
   const { adminLang, setAdminLang } = useAppContext();
   const [activeTab, setActiveTab] = useState<Tab>("global");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const t = (en: string, tr: string) => adminLang === 'tr' ? tr : en;
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === "Sendoz_81") {
+      setIsAuthenticated(true);
+      setError("");
+    } else {
+      setError(t("Incorrect password", "Hatalı şifre"));
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 w-full max-w-md">
+          <div className="flex items-center justify-center mb-8">
+            <div className="bg-primary p-3 rounded-xl text-white">
+              <LayoutDashboard size={28} />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">{t("Admin Login", "Yönetici Girişi")}</h1>
+          <p className="text-center text-gray-500 mb-8">{t("Please enter your password to continue.", "Devam etmek için lütfen şifrenizi girin.")}</p>
+          
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t("Password", "Şifre")}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              />
+              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            </div>
+            <button 
+              type="submit"
+              className="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-primary-light transition-all"
+            >
+              {t("Login", "Giriş Yap")}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   const tabs = [
     { id: "global", label: t("Global Settings", "Genel Ayarlar"), icon: Settings },
+    { id: "welcomePopup", label: t("Welcome Popup", "Açılış Popup"), icon: LayoutDashboard },
     { id: "home", label: t("Home", "Ana Sayfa"), icon: Home },
     { id: "products", label: t("Products", "Ürünler"), icon: Package },
     { id: "about", label: t("About Us", "Hakkımızda"), icon: Info },
@@ -111,6 +162,7 @@ export default function Dashboard() {
           </header>
 
           {activeTab === "global" && <GlobalManager />}
+          {activeTab === "welcomePopup" && <WelcomePopupManager />}
           {activeTab === "home" && <HomeManager />}
           {activeTab === "products" && <ProductsManager />}
           {activeTab === "about" && <AboutManager />}
@@ -314,15 +366,40 @@ function ProductsManager() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Video size={16} className="text-gray-400" /> {t("Video URL (Optional)", "Video URL (İsteğe Bağlı)")}
+                <Video size={16} className="text-gray-400" /> {t("Video URL or Upload", "Video URL veya Yükle")}
               </label>
-              <input 
-                type="text" 
-                value={product.videoUrl}
-                onChange={(e) => setProduct({...product, videoUrl: e.target.value})}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
-                placeholder="https://..."
-              />
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={product.videoUrl}
+                  onChange={(e) => setProduct({...product, videoUrl: e.target.value})}
+                  className="flex-grow px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
+                  placeholder="https://..."
+                />
+                <label className="cursor-pointer bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2">
+                  <Upload size={16} />
+                  <span className="hidden sm:inline">{t("Browse", "Gözat")}</span>
+                  <input 
+                    type="file" 
+                    accept="video/*" 
+                    className="hidden" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 5 * 1024 * 1024) {
+                          alert(t("Video size must be less than 5MB for local storage.", "Yerel depolama için video boyutu 5MB'dan küçük olmalıdır."));
+                          return;
+                        }
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setProduct({...product, videoUrl: reader.result as string});
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }} 
+                  />
+                </label>
+              </div>
             </div>
           </div>
         </div>

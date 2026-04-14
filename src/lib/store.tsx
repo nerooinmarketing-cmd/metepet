@@ -97,6 +97,16 @@ export interface NewsletterLead {
   date: string;
 }
 
+export interface WelcomePopupData {
+  isActive: boolean;
+  imageUrl: string;
+  titleEn: string; titleEs: string; titleFr: string;
+  descEn: string; descEs: string; descFr: string;
+  btn1TextEn: string; btn1TextEs: string; btn1TextFr: string;
+  btn1Url: string;
+  btn2TextEn: string; btn2TextEs: string; btn2TextFr: string;
+}
+
 interface AppState {
   language: 'en' | 'es' | 'fr';
   setLanguage: (lang: 'en' | 'es' | 'fr') => void;
@@ -122,6 +132,8 @@ interface AppState {
   newsletterLeads: NewsletterLead[];
   addNewsletterLead: (email: string) => void;
   deleteNewsletterLead: (id: number) => void;
+  welcomePopupData: WelcomePopupData;
+  updateWelcomePopup: (data: WelcomePopupData) => void;
 }
 
 const defaultPopupFields = {
@@ -274,6 +286,18 @@ const INITIAL_FOOTER: FooterData = {
   facebookUrl: "#",
 };
 
+const INITIAL_WELCOME_POPUP: WelcomePopupData = {
+  isActive: true,
+  imageUrl: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=800",
+  titleEn: "Welcome to Mete Pet", titleEs: "Bienvenido a Mete Pet", titleFr: "Bienvenue chez Mete Pet",
+  descEn: "Discover our premium pet care products designed for the well-being of your furry friends.",
+  descEs: "Descubre nuestros productos premium para el cuidado de mascotas diseñados para el bienestar de tus amigos peludos.",
+  descFr: "Découvrez nos produits de soins pour animaux haut de gamme conçus pour le bien-être de vos amis à fourrure.",
+  btn1TextEn: "Buy on Amazon", btn1TextEs: "Comprar en Amazon", btn1TextFr: "Acheter sur Amazon",
+  btn1Url: "#",
+  btn2TextEn: "Explore Site", btn2TextEs: "Explorar Sitio", btn2TextFr: "Explorer le Site"
+};
+
 const AppContext = createContext<AppState | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -361,6 +385,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [welcomePopupData, setWelcomePopupData] = useState<WelcomePopupData>(() => {
+    const saved = localStorage.getItem('app_welcome_popup');
+    if (!saved) return INITIAL_WELCOME_POPUP;
+    const parsed = JSON.parse(saved);
+    return {
+      ...INITIAL_WELCOME_POPUP,
+      ...parsed,
+    };
+  });
+
   useEffect(() => { localStorage.setItem('app_products', JSON.stringify(products)); }, [products]);
   useEffect(() => { localStorage.setItem('app_global', JSON.stringify(globalData)); }, [globalData]);
   useEffect(() => { localStorage.setItem('app_home', JSON.stringify(homeData)); }, [homeData]);
@@ -369,6 +403,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { localStorage.setItem('app_footer', JSON.stringify(footerData)); }, [footerData]);
   useEffect(() => { localStorage.setItem('app_discount_leads', JSON.stringify(discountLeads)); }, [discountLeads]);
   useEffect(() => { localStorage.setItem('app_newsletter_leads', JSON.stringify(newsletterLeads)); }, [newsletterLeads]);
+  useEffect(() => { localStorage.setItem('app_welcome_popup', JSON.stringify(welcomePopupData)); }, [welcomePopupData]);
   useEffect(() => { localStorage.setItem('app_admin_lang', adminLang); }, [adminLang]);
 
   const updateProduct = (updated: Product) => setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
@@ -379,6 +414,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const updateAbout = (data: AboutData) => setAboutData(data);
   const updateReview = (updated: Review) => setReviews(prev => prev.map(r => r.id === updated.id ? updated : r));
   const updateFooter = (data: FooterData) => setFooterData(data);
+  const updateWelcomePopup = (data: WelcomePopupData) => setWelcomePopupData(data);
 
   const addDiscountLead = (leadData: Omit<DiscountLead, 'id' | 'date'>) => {
     setDiscountLeads(prev => {
@@ -423,7 +459,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       reviews, updateReview,
       footerData, updateFooter,
       discountLeads, addDiscountLead, deleteDiscountLead,
-      newsletterLeads, addNewsletterLead, deleteNewsletterLead
+      newsletterLeads, addNewsletterLead, deleteNewsletterLead,
+      welcomePopupData, updateWelcomePopup
     }}>
       {children}
     </AppContext.Provider>

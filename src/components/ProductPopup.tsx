@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Play, ShoppingBag } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Play, ShoppingBag, ZoomIn } from 'lucide-react';
 import { Product, useAppContext } from '../lib/store';
 
 interface ProductPopupProps {
@@ -9,6 +9,7 @@ interface ProductPopupProps {
 
 export default function ProductPopup({ product, onClose }: ProductPopupProps) {
   const { language } = useAppContext();
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   const getLocalized = (en: string, es: string, fr: string) => {
     if (language === 'es') return es;
@@ -23,6 +24,16 @@ export default function ProductPopup({ product, onClose }: ProductPopupProps) {
   const directions = (getLocalized(product.directionsEn, product.directionsEs, product.directionsFr) || "").split('\n').filter(Boolean);
 
   const t = (en: string, es: string, fr: string) => getLocalized(en, es, fr);
+
+  const getEmbedUrl = (url: string) => {
+    if (!url) return '';
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    if (match && match[2].length === 11) {
+      return `https://www.youtube.com/embed/${match[2]}`;
+    }
+    return url;
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-start sm:pt-8 bg-slate-900/40 font-body selection:bg-secondary-container selection:text-on-secondary-container min-h-screen">
@@ -45,22 +56,52 @@ export default function ProductPopup({ product, onClose }: ProductPopupProps) {
           <section className="mb-8">
             <div className="grid grid-cols-2 gap-1">
               {/* Large Main Images */}
-              <div className="col-span-1 aspect-square overflow-hidden bg-slate-100">
-                <img alt="Product View 1" className="w-full h-full object-cover" src={product.images?.[0] || product.imageUrl} />
+              <div 
+                className="col-span-1 aspect-square overflow-hidden bg-slate-100 relative group cursor-pointer"
+                onClick={() => setZoomedImage(product.images?.[0] || product.imageUrl)}
+              >
+                <img alt="Product View 1" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src={product.images?.[0] || product.imageUrl} />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                  <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={24} />
+                </div>
               </div>
-              <div className="col-span-1 aspect-square overflow-hidden bg-slate-100">
-                <img alt="Product View 2" className="w-full h-full object-cover" src={product.images?.[1] || product.imageUrl} />
+              <div 
+                className="col-span-1 aspect-square overflow-hidden bg-slate-100 relative group cursor-pointer"
+                onClick={() => setZoomedImage(product.images?.[1] || product.imageUrl)}
+              >
+                <img alt="Product View 2" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src={product.images?.[1] || product.imageUrl} />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                  <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={24} />
+                </div>
               </div>
               {/* Row of 3 */}
               <div className="col-span-2 grid grid-cols-3 gap-1">
-                <div className="aspect-square overflow-hidden bg-slate-100">
-                  <img alt="Detail 1" className="w-full h-full object-cover" src={product.images?.[2] || product.imageUrl} />
+                <div 
+                  className="aspect-square overflow-hidden bg-slate-100 relative group cursor-pointer"
+                  onClick={() => setZoomedImage(product.images?.[2] || product.imageUrl)}
+                >
+                  <img alt="Detail 1" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src={product.images?.[2] || product.imageUrl} />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                    <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={20} />
+                  </div>
                 </div>
-                <div className="aspect-square overflow-hidden bg-slate-100">
-                  <img alt="Detail 2" className="w-full h-full object-cover" src={product.images?.[3] || product.imageUrl} />
+                <div 
+                  className="aspect-square overflow-hidden bg-slate-100 relative group cursor-pointer"
+                  onClick={() => setZoomedImage(product.images?.[3] || product.imageUrl)}
+                >
+                  <img alt="Detail 2" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src={product.images?.[3] || product.imageUrl} />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                    <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={20} />
+                  </div>
                 </div>
-                <div className="aspect-square overflow-hidden bg-slate-100">
-                  <img alt="Detail 3" className="w-full h-full object-cover" src={product.images?.[4] || product.imageUrl} />
+                <div 
+                  className="aspect-square overflow-hidden bg-slate-100 relative group cursor-pointer"
+                  onClick={() => setZoomedImage(product.images?.[4] || product.imageUrl)}
+                >
+                  <img alt="Detail 3" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src={product.images?.[4] || product.imageUrl} />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                    <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={20} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -69,14 +110,25 @@ export default function ProductPopup({ product, onClose }: ProductPopupProps) {
           {/* 2. Video Player */}
           {product.videoUrl && (
             <section className="mb-8">
-              <a href={product.videoUrl} target="_blank" rel="noopener noreferrer" className="block relative w-full aspect-video overflow-hidden bg-black group cursor-pointer border border-slate-100">
-                <img alt="Video Placeholder" className="w-full h-full object-cover opacity-80" src={product.imageUrl} />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 bg-red-600 flex items-center justify-center shadow-lg">
-                    <Play className="text-white fill-white" size={32} />
-                  </div>
-                </div>
-              </a>
+              <div className="relative w-full aspect-video overflow-hidden bg-black border border-slate-100">
+                {product.videoUrl.startsWith('data:video/') || product.videoUrl.endsWith('.mp4') ? (
+                  <video 
+                    className="absolute top-0 left-0 w-full h-full object-contain"
+                    src={product.videoUrl}
+                    controls
+                    playsInline
+                  />
+                ) : (
+                  <iframe
+                    className="absolute top-0 left-0 w-full h-full"
+                    src={getEmbedUrl(product.videoUrl)}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  ></iframe>
+                )}
+              </div>
             </section>
           )}
 
@@ -170,6 +222,30 @@ export default function ProductPopup({ product, onClose }: ProductPopupProps) {
           </a>
         </footer>
       </div>
+
+      {/* Zoomed Image Modal */}
+      {zoomedImage && (
+        <div 
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4 sm:p-8 cursor-zoom-out"
+          onClick={() => setZoomedImage(null)}
+        >
+          <button 
+            className="absolute top-4 right-4 sm:top-8 sm:right-8 text-white/70 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              setZoomedImage(null);
+            }}
+          >
+            <X size={32} />
+          </button>
+          <img 
+            src={zoomedImage} 
+            alt="Zoomed Product" 
+            className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }

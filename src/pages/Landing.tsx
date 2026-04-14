@@ -11,12 +11,14 @@ import {
   Twitter, 
   Facebook,
   Menu,
-  X
+  X,
+  CheckCircle2
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useAppContext, Product } from "../lib/store";
 import ProductPopup from "../components/ProductPopup";
 import DiscountPopup from "../components/DiscountPopup";
+import WelcomePopup from "../components/WelcomePopup";
 
 export default function Landing() {
   const { products, homeData, aboutData, reviews, footerData, globalData, language, setLanguage, addNewsletterLead } = useAppContext();
@@ -49,6 +51,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-surface">
+      <WelcomePopup />
       {/* Navigation */}
       <header 
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -157,19 +160,19 @@ export default function Landing() {
                   {t(homeData.badgeEn, homeData.badgeEs, homeData.badgeFr)}
                 </span>
               </div>
-              <h1 className="serif text-6xl md:text-8xl text-primary leading-[0.95] tracking-tight whitespace-pre-line">
+              <h1 className="serif text-6xl md:text-8xl text-primary leading-[0.95] tracking-tight">
                 {t(homeData.titleEn, homeData.titleEs, homeData.titleFr)}
               </h1>
               <p className="text-lg md:text-xl text-text-muted max-w-lg leading-relaxed font-light">
                 {t(homeData.descEn, homeData.descEs, homeData.descFr)}
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
-                <button className="bg-primary text-white px-10 py-5 rounded-full font-bold hover:bg-primary-light transition-all shadow-xl shadow-primary/10 flex items-center gap-2">
+                <a 
+                  href="#products"
+                  className="bg-primary text-white px-10 py-5 rounded-full font-bold hover:bg-primary-light transition-all shadow-xl shadow-primary/10 flex items-center gap-2"
+                >
                   {t(homeData.button1En, homeData.button1Es, homeData.button1Fr)} <ArrowRight size={18} />
-                </button>
-                <button className="bg-surface-dark text-primary px-10 py-5 rounded-full font-bold hover:bg-white transition-all">
-                  {t(homeData.button2En, homeData.button2Es, homeData.button2Fr)}
-                </button>
+                </a>
               </div>
             </motion.div>
 
@@ -195,26 +198,21 @@ export default function Landing() {
 
         {/* Products Section */}
         <section id="products" className="py-32 bg-surface-dark/30 px-6 md:px-10">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-              <div className="space-y-4">
-                <h2 className="serif text-4xl md:text-5xl text-primary">Our Products</h2>
-                <p className="text-text-muted text-lg max-w-xl font-light">Small-batch formulas crafted with organic, ethically sourced ingredients for restorative vitality and longevity.</p>
-              </div>
-              <button className="text-primary font-bold flex items-center gap-2 group">
-                Full Collection <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
-              </button>
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16 space-y-4">
+              <span className="text-green-700 font-bold tracking-[0.2em] uppercase text-xs">
+                {t("THE SELECTION", "LA SELECCIÓN", "LA SÉLECTION")}
+              </span>
+              <h2 className="serif text-4xl md:text-5xl text-gray-900 font-bold">
+                {t("Our Products", "Nuestros Productos", "Nos Produits")}
+              </h2>
             </div>
 
-            <div className={`grid gap-10 ${
-              products.length === 1 ? "grid-cols-1 max-w-md mx-auto" : 
-              products.length === 2 ? "grid-cols-1 md:grid-cols-2 max-w-3xl mx-auto" :
-              products.length === 3 ? "grid-cols-1 md:grid-cols-3 max-w-5xl mx-auto" :
-              "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
-            }`}>
+            <div className="space-y-12">
               {products.map((product, idx) => {
                 const title = t(product.titleEn, product.titleEs, product.titleFr);
                 const desc = t(product.descEn, product.descEs, product.descFr);
+                const benefits = (t(product.benefitsEn, product.benefitsEs, product.benefitsFr) || "").split('\n').filter(Boolean);
                 
                 return (
                   <motion.div 
@@ -223,35 +221,45 @@ export default function Landing() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1 }}
-                    className={`group ${product.offset && products.length >= 3 ? "lg:mt-12" : ""}`}
+                    className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-sm border border-gray-100 flex flex-col lg:flex-row gap-10 items-center"
                   >
+                    <div className="flex-1 space-y-6 order-2 lg:order-1">
+                      <h3 className="text-3xl md:text-4xl font-bold text-gray-900">{title || product.titleEn}</h3>
+                      <p className="text-gray-600 leading-relaxed text-base md:text-lg">{desc || product.descEn}</p>
+                      
+                      {benefits.length > 0 && (
+                        <ul className="space-y-3 pt-2">
+                          {benefits.slice(0, 3).map((benefit, i) => (
+                            <li key={i} className="flex items-start gap-3">
+                              <CheckCircle2 className="text-green-600 flex-shrink-0 mt-0.5" size={20} />
+                              <span className="text-gray-700 font-medium text-sm md:text-base">{benefit}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      
+                      <div className="pt-6">
+                        <button 
+                          onClick={() => setSelectedProduct(product)}
+                          className="bg-gray-900 text-white px-8 py-4 rounded-full font-bold hover:bg-gray-800 transition-all text-sm"
+                        >
+                          {t("View Specification", "Ver Especificación", "Voir les Spécifications")}
+                        </button>
+                      </div>
+                    </div>
+                    
                     <div 
-                      className="aspect-[4/5] rounded-2xl overflow-hidden bg-surface-dark mb-6 relative cursor-pointer"
+                      className="w-full lg:w-1/2 aspect-[4/3] lg:aspect-square rounded-[2rem] overflow-hidden order-1 lg:order-2 bg-gray-100 cursor-pointer relative group"
                       onClick={() => setSelectedProduct(product)}
                     >
                       {product.imageUrl && (
                         <img 
                           src={product.imageUrl} 
                           alt={title || product.titleEn} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           referrerPolicy="no-referrer"
                         />
                       )}
-                    </div>
-                    <div className="space-y-3">
-                      <h3 
-                        className="serif text-2xl text-primary cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => setSelectedProduct(product)}
-                      >
-                        {title || product.titleEn}
-                      </h3>
-                      <p className="text-sm text-text-muted leading-relaxed">{desc || product.descEn}</p>
-                      <button 
-                        onClick={() => setSelectedProduct(product)}
-                        className="inline-block pt-2 text-xs font-bold uppercase tracking-widest text-primary border-b border-primary/20 hover:border-primary transition-all"
-                      >
-                        {product.linkText}
-                      </button>
                     </div>
                   </motion.div>
                 );
@@ -400,27 +408,27 @@ export default function Landing() {
         </section>
 
         {/* Newsletter Section */}
-        <section className="py-40 px-6 md:px-10 text-center">
-          <div className="max-w-2xl mx-auto space-y-10">
+        <section className="py-20 px-6 md:px-10 text-center">
+          <div className="max-w-2xl mx-auto space-y-8">
             <div className="space-y-4">
               <span className="text-secondary text-xs font-bold tracking-[0.3em] uppercase">Stay Updated</span>
-              <h2 className="serif text-4xl md:text-5xl text-primary">Join the Sanctuary</h2>
-              <p className="text-text-muted text-lg font-light">
+              <h2 className="serif text-3xl md:text-4xl text-primary">Join the Sanctuary</h2>
+              <p className="text-text-muted text-base font-light">
                 Subscribe to our newsletter for the latest pet care tips and product updates.
               </p>
             </div>
-            <form className="flex flex-col sm:flex-row gap-3 pt-4" onSubmit={handleNewsletterSubmit}>
+            <form className="flex flex-col sm:flex-row gap-3 pt-2" onSubmit={handleNewsletterSubmit}>
               <input 
                 type="email" 
                 required
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="Enter your email" 
-                className="flex-grow bg-surface-dark border-none rounded-full px-8 py-5 focus:ring-2 focus:ring-primary outline-none transition-all"
+                className="flex-grow bg-surface-dark border-none rounded-full px-6 py-4 focus:ring-2 focus:ring-primary outline-none transition-all"
               />
               <button 
                 type="submit"
-                className="bg-primary text-white px-10 py-5 rounded-full font-bold hover:bg-primary-light transition-all flex items-center justify-center gap-2"
+                className="bg-primary text-white px-8 py-4 rounded-full font-bold hover:bg-primary-light transition-all flex items-center justify-center gap-2"
               >
                 {isNewsletterSubscribed ? "Subscribed!" : "Subscribe"} <Mail size={18} />
               </button>
@@ -430,10 +438,10 @@ export default function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-surface-dark pt-32 pb-12 px-6 md:px-10">
+      <footer className="bg-surface-dark pt-16 pb-8 px-6 md:px-10">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
-            <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div className="space-y-6">
               <a href={globalData.logoLink} className="flex items-center gap-2 group cursor-pointer">
                 {globalData.logoUrl ? (
                   <img src={globalData.logoUrl || undefined} alt={globalData.logoText} className="h-8 object-contain" />
